@@ -257,18 +257,11 @@ function renderNav() {
         showView('view-list-prescriptions');
     } else {
         navHtml = `
-            <a class="nav-item active" onclick="showView('view-admin', this)"><i class="ri-admin-line"></i> Admin Dashboard</a>
+            <a class="nav-item active" onclick="showView('view-admin-dashboard', this)"><i class="ri-dashboard-3-line"></i> Dashboard</a>
+            <a class="nav-item" onclick="showView('view-admin-users', this)"><i class="ri-group-line"></i> Users</a>
+            <a class="nav-item" onclick="showView('view-admin-receipts', this)"><i class="ri-wallet-3-line"></i> System Receipts</a>
         `;
-        document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-        if (!document.getElementById('view-admin')) {
-            const adminView = document.createElement('section');
-            adminView.id = 'view-admin';
-            adminView.className = 'view-section active';
-            adminView.innerHTML = `<div class="glass-panel p-4"><h2>Admin Access</h2><p>Admin dashboard is not yet implemented in the UI. Please register as a Doctor or Patient.</p></div>`;
-            DOM.dashboardViews.appendChild(adminView);
-        } else {
-            document.getElementById('view-admin').classList.add('active');
-        }
+        showView('view-admin-dashboard');
     }
     DOM.navMenu.innerHTML = navHtml;
 }
@@ -285,6 +278,9 @@ function showView(viewId, navElement = null) {
     // Load data if needed
     if (viewId === 'view-list-prescriptions') fetchPrescriptions();
     if (viewId === 'view-list-receipts') fetchReceipts();
+    if (viewId === 'view-admin-dashboard') fetchAdminStats();
+    if (viewId === 'view-admin-users') fetchAdminUsers();
+    if (viewId === 'view-admin-receipts') fetchAdminReceipts();
 }
 
 // Data Fetching
@@ -340,4 +336,64 @@ function openGenerateReceipt(prescId) {
     document.getElementById('receiptPrescId').value = prescId;
     document.getElementById('receiptPrescIdDisplay').value = `Prescription #${prescId}`;
     showView('view-generate-receipt');
+}
+
+// Admin API Fetchers
+async function fetchAdminStats() {
+    try {
+        const response = await apiCall('/api/admin/stats');
+        const stats = response.data;
+        document.getElementById('statTotalUsers').textContent = stats.totalUsers;
+        document.getElementById('statTotalDoctors').textContent = stats.totalDoctors;
+        document.getElementById('statTotalPatients').textContent = stats.totalPatients;
+        document.getElementById('statTotalPrescriptions').textContent = stats.totalPrescriptions;
+        document.getElementById('statTotalReceipts').textContent = stats.totalReceipts;
+        document.getElementById('statTotalRevenue').textContent = `$${parseFloat(stats.totalRevenue).toFixed(2)}`;
+    } catch (err) {}
+}
+
+async function fetchAdminUsers() {
+    try {
+        const response = await apiCall('/api/admin/users');
+        const tbody = document.getElementById('adminUsersTableBody');
+        tbody.innerHTML = '';
+        
+        response.data.forEach(u => {
+            const tr = document.createElement('tr');
+            let roleBadge = 'badge-pending';
+            if (u.role === 'ROLE_ADMIN') roleBadge = 'badge-paid';
+            else if (u.role === 'ROLE_DOCTOR') roleBadge = 'badge-paid bg-primary';
+            
+            tr.innerHTML = `
+                <td>#${u.id}</td>
+                <td><strong>${u.fullName}</strong></td>
+                <td>${u.email}</td>
+                <td><span class="badge ${roleBadge}">${u.role.replace('ROLE_', '')}</span></td>
+                <td>${u.createdAt ? u.createdAt.substring(0, 10) : 'N/A'}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {}
+}
+
+async function fetchAdminReceipts() {
+    try {
+        const response = await apiCall('/api/admin/receipts');
+        const tbody = document.getElementById('adminReceiptsTableBody');
+        tbody.innerHTML = '';
+        
+        response.data.forEach(r => {
+            const tr = document.createElement('tr');
+            const statusClass = r.status === 'PENDING' ? 'badge-pending' : 'badge-paid';
+            tr.innerHTML = `
+                <td><strong>${r.receiptNumber}</strong></td>
+                <td>${r.generatedAt.substring(0, 10)}</td>
+                <td>${r.doctorName}</td>
+                <td>${r.patientName}</td>
+                <td>$${r.netAmount.toFixed(2)}</td>
+                <td><span class="badge ${statusClass}">${r.status}</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {}
 }

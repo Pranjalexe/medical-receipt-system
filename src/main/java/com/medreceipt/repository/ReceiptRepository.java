@@ -81,4 +81,12 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
      */
     @Query("SELECT r FROM Receipt r LEFT JOIN FETCH r.items WHERE r.id = :receiptId")
     Optional<Receipt> findByIdWithItems(@Param("receiptId") Long receiptId);
+
+    /**
+     * Calculates the total revenue across all generated receipts.
+     *
+     * @return the sum of net amounts of all receipts
+     */
+    @Query("SELECT SUM(r.netAmount) FROM Receipt r")
+    java.math.BigDecimal sumNetAmounts();
 }
