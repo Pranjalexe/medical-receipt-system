@@ -77,6 +77,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/drugs/search").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/", "/index.html", "/*.css", "/*.js", "/favicon.ico", "/assets/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptions -> exceptions

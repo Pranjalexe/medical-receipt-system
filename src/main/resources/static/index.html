@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Medical Receipt System</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar hidden" id="sidebar">
+            <div class="brand">
+                <i class="ri-hospital-line"></i>
+                <h2>MedReceipt</h2>
+            </div>
+            <div class="user-info" id="userInfo">
+                <div class="avatar"><i class="ri-user-line"></i></div>
+                <div class="details">
+                    <p class="name" id="userName">User Name</p>
+                    <p class="role" id="userRole">Role</p>
+                </div>
+            </div>
+            <nav class="nav-menu" id="navMenu">
+                <!-- Dynamically populated based on role -->
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-outline-danger w-100">
+                    <i class="ri-logout-box-r-line"></i> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Auth Container -->
+            <div class="auth-container active" id="authView">
+                <div class="auth-card glass-panel">
+                    <div class="auth-header">
+                        <i class="ri-hospital-line text-primary" style="font-size: 3rem;"></i>
+                        <h2>Welcome to MedReceipt</h2>
+                        <p>Sign in to manage prescriptions and receipts</p>
+                    </div>
+                    
+                    <div class="tabs">
+                        <button class="tab-btn active" data-target="loginForm">Login</button>
+                        <button class="tab-btn" data-target="registerForm">Register</button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="loginForm" class="auth-form active">
+                        <div class="form-group">
+                            <label><i class="ri-mail-line"></i> Email</label>
+                            <input type="email" id="loginEmail" required placeholder="name@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="ri-lock-password-line"></i> Password</label>
+                            <input type="password" id="loginPassword" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Sign In <i class="ri-arrow-right-line"></i></button>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="registerForm" class="auth-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="regName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Role</label>
+                                <select id="regRole" required>
+                                    <option value="ROLE_DOCTOR">Doctor</option>
+                                    <option value="ROLE_PATIENT">Patient</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="regEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="regPassword" required>
+                            </div>
+                        </div>
+
+                        <!-- Doctor Fields -->
+                        <div id="doctorFields" class="role-fields active">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Specialization</label>
+                                    <input type="text" id="regSpecialization">
+                                </div>
+                                <div class="form-group">
+                                    <label>License Number</label>
+                                    <input type="text" id="regLicense">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Patient Fields -->
+                        <div id="patientFields" class="role-fields">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Date of Birth</label>
+                                    <input type="date" id="regDob">
+                                </div>
+                                <div class="form-group">
+                                    <label>Blood Group</label>
+                                    <select id="regBloodGroup">
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Address</label>
+                                <input type="text" id="regAddress">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Dashboard Views -->
+            <div id="dashboardViews" class="dashboard-container hidden">
+                
+                <!-- Create Prescription View -->
+                <section id="view-create-prescription" class="view-section active">
+                    <header class="section-header">
+                        <h2><i class="ri-file-add-line"></i> Issue Prescription</h2>
+                        <p>Search drugs via OpenFDA and issue to patients.</p>
+                    </header>
+                    <div class="glass-panel p-4">
+                        <form id="createPrescriptionForm">
+                            <div class="form-group">
+                                <label>Patient ID</label>
+                                <input type="number" id="prescPatientId" required min="1">
+                            </div>
+                            
+                            <div class="items-container">
+                                <h3>Medication Items</h3>
+                                <div id="prescriptionItemsList">
+                                    <!-- Items added dynamically -->
+                                </div>
+                                <button type="button" class="btn btn-outline" id="addPrescItemBtn">
+                                    <i class="ri-add-line"></i> Add Medication
+                                </button>
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label>Clinical Notes</label>
+                                <textarea id="prescNotes" rows="3" placeholder="Additional instructions..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary mt-3 w-100">Issue Prescription</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- List Prescriptions View -->
+                <section id="view-list-prescriptions" class="view-section">
+                    <header class="section-header">
+                        <h2><i class="ri-file-list-3-line"></i> Prescriptions</h2>
+                        <button class="btn btn-sm btn-outline" onclick="fetchPrescriptions()"><i class="ri-refresh-line"></i></button>
+                    </header>
+                    <div class="table-container glass-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date</th>
+                                    <th>Doctor/Patient</th>
+                                    <th>Items</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="prescriptionsTableBody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Generate Receipt View (Modal-like behavior within page) -->
+                <section id="view-generate-receipt" class="view-section">
+                    <header class="section-header">
+                        <h2><i class="ri-receipt-line"></i> Generate Receipt</h2>
+                        <button class="btn btn-sm btn-outline" onclick="showView('view-list-prescriptions')">Back</button>
+                    </header>
+                    <div class="glass-panel p-4">
+                        <form id="generateReceiptForm">
+                            <input type="hidden" id="receiptPrescId">
+                            <div class="form-group">
+                                <label>Prescription ID</label>
+                                <input type="text" id="receiptPrescIdDisplay" disabled>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Discount ($)</label>
+                                    <input type="number" step="0.01" id="receiptDiscount" value="0.00">
+                                </div>
+                                <div class="form-group">
+                                    <label>Tax Rate (%)</label>
+                                    <input type="number" step="0.1" id="receiptTax" value="0.0">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Payment Method</label>
+                                <select id="receiptPaymentMethod">
+                                    <option value="CASH">Cash</option>
+                                    <option value="CARD">Card</option>
+                                    <option value="INSURANCE">Insurance</option>
+                                    <option value="UPI">UPI</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100 mt-3">Generate Financial Receipt & PDF</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- List Receipts View -->
+                <section id="view-list-receipts" class="view-section">
+                    <header class="section-header">
+                        <h2><i class="ri-wallet-3-line"></i> Receipts</h2>
+                        <button class="btn btn-sm btn-outline" onclick="fetchReceipts()"><i class="ri-refresh-line"></i></button>
+                    </header>
+                    <div class="table-container glass-panel">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Receipt #</th>
+                                    <th>Date</th>
+                                    <th>Total ($)</th>
+                                    <th>Status</th>
+                                    <th>Method</th>
+                                </tr>
+                            </thead>
+                            <tbody id="receiptsTableBody">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
