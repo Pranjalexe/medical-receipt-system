@@ -1,6 +1,6 @@
 ﻿<div align="center">
 
-# ≡ƒÅÑ Digital Medical Receipt Management System
+#Digital Medical Receipt Management System
 
 [![Java Support](https://img.shields.io/badge/Java-17+-orange.svg?style=flat-square&logo=java)](#)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2.3-brightgreen.svg?style=flat-square&logo=spring)](#)
