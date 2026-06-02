@@ -19,4 +19,17 @@ public class MedReceiptApplication {
     public static void main(String[] args) {
         SpringApplication.run(MedReceiptApplication.class, args);
     }
+
+    @org.springframework.context.annotation.Bean
+    public org.springframework.boot.CommandLineRunner initAdmin(
+            com.medreceipt.repository.UserRepository userRepository,
+            org.springframework.security.crypto.password.PasswordEncoder passwordEncoder) {
+        return args -> {
+            userRepository.findByEmail("admin@medreceipt.com").ifPresent(admin -> {
+                admin.setPassword(passwordEncoder.encode("password"));
+                userRepository.save(admin);
+                System.out.println("Admin password updated successfully to 'password'");
+            });
+        };
+    }
 }

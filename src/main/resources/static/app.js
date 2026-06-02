@@ -257,14 +257,18 @@ function renderNav() {
         showView('view-list-prescriptions');
     } else {
         navHtml = `
-            <a class="nav-item active"><i class="ri-admin-line"></i> Admin Dashboard</a>
+            <a class="nav-item active" onclick="showView('view-admin', this)"><i class="ri-admin-line"></i> Admin Dashboard</a>
         `;
         document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-        const adminView = document.createElement('div');
-        adminView.innerHTML = `<h2>Admin Access</h2><p>Admin dashboard is not yet implemented in the UI. Please register as a Doctor or Patient.</p>`;
-        adminView.style.padding = '2rem';
-        DOM.dashboardViews.innerHTML = '';
-        DOM.dashboardViews.appendChild(adminView);
+        if (!document.getElementById('view-admin')) {
+            const adminView = document.createElement('section');
+            adminView.id = 'view-admin';
+            adminView.className = 'view-section active';
+            adminView.innerHTML = `<div class="glass-panel p-4"><h2>Admin Access</h2><p>Admin dashboard is not yet implemented in the UI. Please register as a Doctor or Patient.</p></div>`;
+            DOM.dashboardViews.appendChild(adminView);
+        } else {
+            document.getElementById('view-admin').classList.add('active');
+        }
     }
     DOM.navMenu.innerHTML = navHtml;
 }
