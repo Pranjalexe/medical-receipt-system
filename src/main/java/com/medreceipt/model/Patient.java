@@ -47,7 +47,7 @@ public class Patient {
     private LocalDate dateOfBirth;
 
     @Lob
-    @Column(name = "address", columnDefinition = "TEXT")
+    @Column(name = "patient_address", columnDefinition = "TEXT")
     private String address;
 
     @Size(max = 10, message = "Blood group must not exceed 10 characters")

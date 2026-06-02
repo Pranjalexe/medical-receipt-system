@@ -58,7 +58,7 @@ public class Receipt {
 
     @NotBlank(message = "Receipt number is required")
     @Size(max = 50, message = "Receipt number must not exceed 50 characters")
-    @Column(name = "receipt_number", nullable = false, unique = true, length = 50)
+    @Column(name = "receipt_number", nullable = false, length = 50)
     private String receiptNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -92,7 +92,7 @@ public class Receipt {
 
     @NotNull(message = "Receipt status is required")
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
+    @Column(name = "receipt_status", nullable = false, length = 20)
     private ReceiptStatus status = ReceiptStatus.PENDING;
 
     @Enumerated(EnumType.STRING)
@@ -115,7 +115,7 @@ public class Receipt {
      * {@code OptimisticLockException} on concurrent modification conflicts.
      */
     @Version
-    @Column(name = "version")
+    @Column(name = "opt_version")
     private Long version;
 
     // ── Lifecycle Callbacks ──────────────────────────────────────────────

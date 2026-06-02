@@ -54,7 +54,7 @@ public class Prescription {
     private List<PrescriptionItem> prescriptionItems = new ArrayList<>();
 
     @Lob
-    @Column(name = "notes", columnDefinition = "TEXT")
+    @Column(name = "prescription_notes", columnDefinition = "TEXT")
     private String notes;
 
     @Column(name = "issue_date")

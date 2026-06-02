@@ -62,7 +62,7 @@ public class Drug {
     private String dosageForm;
 
     @Size(max = 100, message = "Route must not exceed 100 characters")
-    @Column(name = "route", length = 100)
+    @Column(name = "admin_route", length = 100)
     private String route;
 
     @Column(name = "verified", nullable = false)

@@ -33,7 +33,7 @@ import java.util.Objects;
  * @since 1.0
  */
 @Entity
-@Table(name = "users")
+@Table(name = "app_users")
 public class User {
 
     @Id
@@ -62,7 +62,7 @@ public class User {
 
     @NotNull(message = "Role is required")
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, length = 20)
+    @Column(name = "user_role", nullable = false, length = 20)
     private Role role;
 
     @Column(name = "created_at", nullable = false, updatable = false)

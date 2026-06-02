@@ -65,7 +65,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 });
 
         GrantedAuthority authority = new SimpleGrantedAuthority(
-                "ROLE_" + user.getRole().name()
+                user.getRole().name()
         );
         List<GrantedAuthority> authorities = Collections.singletonList(authority);
 

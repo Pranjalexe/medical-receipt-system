@@ -106,7 +106,7 @@ public class AuthService {
         log.info("User created successfully with ID: {} and role: {}", savedUser.getId(), savedUser.getRole());
 
         // Create role-specific profile
-        if (Role.ROLE_DOCTOR.equals(request.getRole())) {
+        if (Role.ROLE_DOCTOR == user.getRole()) {
             Doctor doctor = new Doctor();
             doctor.setUser(savedUser);
             doctor.setSpecialization(request.getSpecialization());
@@ -115,7 +115,7 @@ public class AuthService {
             log.info("Doctor profile created for user ID: {} with license: {}",
                     savedUser.getId(), request.getLicenseNumber());
 
-        } else if (Role.ROLE_PATIENT.equals(request.getRole())) {
+        } else if (Role.ROLE_PATIENT == user.getRole()) {
             Patient patient = new Patient();
             patient.setUser(savedUser);
             patient.setDateOfBirth(LocalDate.parse(request.getDateOfBirth()));
