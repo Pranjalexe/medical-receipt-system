@@ -1,0 +1,64 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: medical-receipt-system
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/medical_receipt_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 30000
+      connection-timeout: 20000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  cache:
+    type: caffeine
+
+# JWT Configuration
+app:
+  jwt:
+    secret: MedReceiptSecureJWTSigningKeyThatIsAtLeast256BitsLongForHS256Algorithm2024
+    expiration-ms: 86400000  # 24 hours
+
+  receipt:
+    storage-path: ./receipts
+
+# OpenFDA API Configuration
+openfda:
+  api:
+    base-url: https://api.fda.gov/drug/ndc.json
+    timeout: 5000
+
+# Logging
+logging:
+  level:
+    com.medreceipt: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+
+# Springdoc OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
