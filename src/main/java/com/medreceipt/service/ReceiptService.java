@@ -225,7 +225,7 @@ public class ReceiptService {
         Patient patient = patientRepository.findByUserId(patientUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient", "userId", patientUserId));
 
-        List<Receipt> receipts = receiptRepository.findByPatientId(patient.getId());
+        List<Receipt> receipts = receiptRepository.findByPatientIdWithItems(patient.getId());
         log.info("Found {} receipts for patient ID: {}", receipts.size(), patient.getId());
 
         return receipts.stream()
@@ -247,7 +247,7 @@ public class ReceiptService {
         Doctor doctor = doctorRepository.findByUserId(doctorUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor", "userId", doctorUserId));
 
-        List<Receipt> receipts = receiptRepository.findByDoctorId(doctor.getId());
+        List<Receipt> receipts = receiptRepository.findByDoctorIdWithItems(doctor.getId());
         log.info("Found {} receipts for doctor ID: {}", receipts.size(), doctor.getId());
 
         return receipts.stream()
@@ -367,9 +367,8 @@ public class ReceiptService {
      */
     private String generateReceiptNumber() {
         String dateStr = LocalDate.now().format(DATE_FORMAT);
-        long count = receiptRepository.count() + 1;
-        String sequenceStr = String.format("%05d", count);
-        String receiptNumber = "MR-" + dateStr + "-" + sequenceStr;
+        String uniqueId = java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String receiptNumber = "MR-" + dateStr + "-" + uniqueId;
         log.debug("Generated receipt number: {}", receiptNumber);
         return receiptNumber;
     }

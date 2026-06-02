@@ -158,7 +158,7 @@ public class PrescriptionService {
         Doctor doctor = doctorRepository.findByUserId(doctorUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor", "userId", doctorUserId));
 
-        List<Prescription> prescriptions = prescriptionRepository.findByDoctorId(doctor.getId());
+        List<Prescription> prescriptions = prescriptionRepository.findByDoctorIdWithItems(doctor.getId());
         log.info("Found {} prescriptions for doctor ID: {}", prescriptions.size(), doctor.getId());
 
         return prescriptions.stream()
@@ -180,7 +180,7 @@ public class PrescriptionService {
         Patient patient = patientRepository.findByUserId(patientUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient", "userId", patientUserId));
 
-        List<Prescription> prescriptions = prescriptionRepository.findByPatientId(patient.getId());
+        List<Prescription> prescriptions = prescriptionRepository.findByPatientIdWithItems(patient.getId());
         log.info("Found {} prescriptions for patient ID: {}", prescriptions.size(), patient.getId());
 
         return prescriptions.stream()

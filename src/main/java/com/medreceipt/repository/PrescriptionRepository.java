@@ -52,7 +52,7 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
      * @param prescriptionId the prescription ID
      * @return an Optional containing the prescription with items if found, empty otherwise
      */
-    @Query("SELECT p FROM Prescription p LEFT JOIN FETCH p.items WHERE p.id = :prescriptionId")
+    @Query("SELECT p FROM Prescription p LEFT JOIN FETCH p.prescriptionItems WHERE p.id = :prescriptionId")
     Optional<Prescription> findByIdWithItems(@Param("prescriptionId") Long prescriptionId);
 
     /**
@@ -62,6 +62,16 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
      * @param patientId the patient's ID
      * @return a list of prescriptions with items eagerly fetched
      */
-    @Query("SELECT DISTINCT p FROM Prescription p LEFT JOIN FETCH p.items WHERE p.patient.id = :patientId")
+    @Query("SELECT DISTINCT p FROM Prescription p LEFT JOIN FETCH p.prescriptionItems WHERE p.patient.id = :patientId")
     List<Prescription> findByPatientIdWithItems(@Param("patientId") Long patientId);
+
+    /**
+     * Fetches all prescriptions for a doctor with their items eagerly loaded.
+     * Uses DISTINCT to prevent duplicate results from the JOIN FETCH.
+     *
+     * @param doctorId the doctor's ID
+     * @return a list of prescriptions with items eagerly fetched
+     */
+    @Query("SELECT DISTINCT p FROM Prescription p LEFT JOIN FETCH p.prescriptionItems WHERE p.doctor.id = :doctorId")
+    List<Prescription> findByDoctorIdWithItems(@Param("doctorId") Long doctorId);
 }

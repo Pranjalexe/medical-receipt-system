@@ -1,33 +1,23 @@
-# Application Configuration for Testing Profile
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driverClassName: org.h2.Driver
     username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
+    password: password
   jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create-drop
-    show-sql: false
-    database-platform: org.hibernate.dialect.H2Dialect
-
-  cache:
-    type: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: never
 
 app:
   jwt:
-    secret: TestSecretKeyThatIsAtLeast256BitsLongForHS256AlgorithmForTestingPurposes
-    expiration-ms: 3600000
-
-  receipt:
-    storage-path: ./test-receipts
-
-openfda:
-  api:
-    base-url: https://api.fda.gov/drug/ndc.json
-    timeout: 5000
-
-logging:
-  level:
-    com.medreceipt: WARN
+    secret: "9a4f2c8d3b7a1e6f45c8a0b3f267d8b1d4e6f3c8a9d2b5f8e3a9c8b5f6v8a3d9"
+    expiration-ms: 86400000

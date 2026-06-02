@@ -64,6 +64,16 @@ public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
     List<Receipt> findByPatientIdWithItems(@Param("patientId") Long patientId);
 
     /**
+     * Fetches all receipts issued by a doctor with their items eagerly loaded.
+     * Uses DISTINCT to prevent duplicate results caused by the JOIN FETCH operation.
+     *
+     * @param doctorId the doctor's ID
+     * @return a list of receipts with items eagerly fetched
+     */
+    @Query("SELECT DISTINCT r FROM Receipt r LEFT JOIN FETCH r.items WHERE r.doctor.id = :doctorId")
+    List<Receipt> findByDoctorIdWithItems(@Param("doctorId") Long doctorId);
+
+    /**
      * Fetches a single receipt by ID with its items eagerly loaded.
      *
      * @param receiptId the receipt ID
