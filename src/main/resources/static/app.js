@@ -249,12 +249,22 @@ function renderNav() {
             <a class="nav-item" onclick="showView('view-list-receipts', this)"><i class="ri-wallet-3-line"></i> Receipts</a>
         `;
         showView('view-create-prescription');
-    } else {
+    } else if (state.user.role === 'ROLE_PATIENT') {
         navHtml = `
             <a class="nav-item active" onclick="showView('view-list-prescriptions', this)"><i class="ri-file-list-3-line"></i> My Prescriptions</a>
             <a class="nav-item" onclick="showView('view-list-receipts', this)"><i class="ri-wallet-3-line"></i> My Receipts</a>
         `;
         showView('view-list-prescriptions');
+    } else {
+        navHtml = `
+            <a class="nav-item active"><i class="ri-admin-line"></i> Admin Dashboard</a>
+        `;
+        document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+        const adminView = document.createElement('div');
+        adminView.innerHTML = `<h2>Admin Access</h2><p>Admin dashboard is not yet implemented in the UI. Please register as a Doctor or Patient.</p>`;
+        adminView.style.padding = '2rem';
+        DOM.dashboardViews.innerHTML = '';
+        DOM.dashboardViews.appendChild(adminView);
     }
     DOM.navMenu.innerHTML = navHtml;
 }
