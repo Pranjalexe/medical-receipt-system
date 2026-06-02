@@ -113,6 +113,22 @@ public class DoctorService {
     }
 
     /**
+     * Retrieves all patients in the system.
+     *
+     * @return a list of {@link com.medreceipt.dto.response.PatientResponse}
+     */
+    @Transactional(readOnly = true)
+    public List<com.medreceipt.dto.response.PatientResponse> getAllPatients() {
+        return patientRepository.findAll().stream().map(patient -> {
+            com.medreceipt.dto.response.PatientResponse response = new com.medreceipt.dto.response.PatientResponse();
+            response.setId(patient.getId());
+            response.setFullName(patient.getUser().getFullName());
+            response.setEmail(patient.getUser().getEmail());
+            return response;
+        }).collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
      * Retrieves all doctors with a given specialization.
      *
      * @param specialization the medical specialization to filter by

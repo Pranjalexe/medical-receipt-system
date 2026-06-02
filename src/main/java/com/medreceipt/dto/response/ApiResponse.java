@@ -1,6 +1,7 @@
 package com.medreceipt.dto.response;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Generic API response wrapper used across all REST endpoints.
@@ -39,13 +40,13 @@ public class ApiResponse {
     /**
      * The timestamp when this response was generated.
      */
-    private LocalDateTime timestamp;
+    private String timestamp;
 
     /**
      * Default no-args constructor. Sets the timestamp to the current time.
      */
     public ApiResponse() {
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     /**
@@ -56,7 +57,7 @@ public class ApiResponse {
      * @param data      the response payload
      * @param timestamp the response timestamp
      */
-    public ApiResponse(boolean success, String message, Object data, LocalDateTime timestamp) {
+    public ApiResponse(boolean success, String message, Object data, String timestamp) {
         this.success = success;
         this.message = message;
         this.data = data;
@@ -74,7 +75,7 @@ public class ApiResponse {
         this.success = success;
         this.message = message;
         this.data = data;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 
     /**
@@ -89,7 +90,7 @@ public class ApiResponse {
         response.setSuccess(true);
         response.setMessage(message);
         response.setData(data);
-        response.setTimestamp(LocalDateTime.now());
+        response.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         return response;
     }
 
@@ -114,7 +115,7 @@ public class ApiResponse {
         response.setSuccess(false);
         response.setMessage(message);
         response.setData(null);
-        response.setTimestamp(LocalDateTime.now());
+        response.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         return response;
     }
 
@@ -177,7 +178,7 @@ public class ApiResponse {
      *
      * @return the timestamp
      */
-    public LocalDateTime getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
@@ -186,7 +187,7 @@ public class ApiResponse {
      *
      * @param timestamp the timestamp to set
      */
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 }

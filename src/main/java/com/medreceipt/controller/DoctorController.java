@@ -186,7 +186,13 @@ public class DoctorController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    // Patients by doctor endpoint removed as PatientResponse doesn't exist
+    @GetMapping("/patients")
+    @Operation(summary = "List all patients", description = "Retrieves all patients in the system for prescription creation")
+    public ResponseEntity<ApiResponse> getPatients() {
+        List<com.medreceipt.dto.response.PatientResponse> patients = doctorService.getAllPatients();
+        ApiResponse apiResponse = new ApiResponse(true, "Patients retrieved successfully", patients);
+        return ResponseEntity.ok(apiResponse);
+    }
 
     /**
      * Resolves the current user's ID from the Authentication principal.

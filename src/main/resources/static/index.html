@@ -225,6 +225,7 @@
                                     <th>Patient</th>
                                     <th>Total ($)</th>
                                     <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="adminReceiptsTableBody">
@@ -243,9 +244,11 @@
                     <div class="glass-panel p-4">
                         <form id="createPrescriptionForm">
                             <div class="form-group">
-                                <label>Patient ID</label>
-                                <input type="number" id="prescPatientId" required min="1">
-                            </div>
+                            <label class="form-label">Patient</label>
+                            <select id="prescPatientId" class="form-control" required>
+                                <option value="" disabled selected>Select a patient...</option>
+                            </select>
+                        </div>
                             
                             <div class="items-container">
                                 <h3>Medication Items</h3>
@@ -344,6 +347,7 @@
                                     <th>Total ($)</th>
                                     <th>Status</th>
                                     <th>Method</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="receiptsTableBody">
@@ -360,6 +364,6 @@
     <!-- Toast Notifications -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=2"></script>
 </body>
 </html>

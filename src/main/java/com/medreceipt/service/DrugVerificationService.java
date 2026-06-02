@@ -220,16 +220,24 @@ public class DrugVerificationService {
         }
 
         log.info("Drug '{}' not found locally, triggering OpenFDA verification", drugName);
-        DrugVerificationResponse response = verifyDrug(drugName);
-
-        // After verification, the drug should be in the database
-        return drugRepository.findByBrandNameIgnoreCase(drugName)
-                .orElseThrow(() -> {
-                    log.error("Drug '{}' was verified but not found in database", drugName);
-                    return new DrugVerificationException(
-                            "Drug '" + drugName + "' was verified but could not be retrieved from database."
-                    );
-                });
+        try {
+            verifyDrug(drugName);
+            // After verification, the drug should be in the database
+            return drugRepository.findByBrandNameIgnoreCase(drugName)
+                    .orElseThrow(() -> {
+                        log.error("Drug '{}' was verified but not found in database", drugName);
+                        return new DrugVerificationException(
+                                "Drug '" + drugName + "' was verified but could not be retrieved from database."
+                        );
+                    });
+        } catch (DrugVerificationException e) {
+            log.warn("OpenFDA could not verify drug '{}'. Creating unverified local entry.", drugName);
+            Drug unverifiedDrug = new Drug();
+            unverifiedDrug.setBrandName(drugName);
+            unverifiedDrug.setVerified(false);
+            unverifiedDrug.setCachedAt(java.time.LocalDateTime.now());
+            return drugRepository.save(unverifiedDrug);
+        }
     }
 
     /**

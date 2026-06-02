@@ -194,10 +194,14 @@ function initForms() {
 // Dynamic Prescription Items
 function addPrescriptionItemRow() {
     const list = document.getElementById('prescriptionItemsList');
+    const rowId = 'drug-' + Date.now();
     const row = document.createElement('div');
     row.className = 'presc-item-row';
     row.innerHTML = `
-        <div class="form-group mb-0"><input type="text" class="i-drug" placeholder="Drug (e.g. Advil)" required></div>
+        <div class="form-group mb-0">
+            <input type="text" class="i-drug" list="${rowId}-list" placeholder="Drug (Search OpenFDA)" required oninput="searchDrugs(this, '${rowId}-list')">
+            <datalist id="${rowId}-list"></datalist>
+        </div>
         <div class="form-group mb-0"><input type="text" class="i-dosage" placeholder="Dosage" required></div>
         <div class="form-group mb-0"><input type="text" class="i-freq" placeholder="Freq" required></div>
         <div class="form-group mb-0"><input type="text" class="i-dur" placeholder="Duration" required></div>
@@ -205,6 +209,27 @@ function addPrescriptionItemRow() {
         <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.parentElement.remove()"><i class="ri-delete-bin-line"></i></button>
     `;
     list.appendChild(row);
+}
+
+let searchTimeout = null;
+async function searchDrugs(inputEl, datalistId) {
+    clearTimeout(searchTimeout);
+    const query = inputEl.value;
+    if (query.length < 3) return;
+    
+    searchTimeout = setTimeout(async () => {
+        try {
+            const response = await apiCall('/api/drugs/search?name=' + encodeURIComponent(query));
+            const datalist = document.getElementById(datalistId);
+            datalist.innerHTML = '';
+            response.data.forEach(drug => {
+                const option = document.createElement('option');
+                option.value = drug.brandName;
+                option.textContent = drug.genericName ? `(${drug.genericName})` : '';
+                datalist.appendChild(option);
+            });
+        } catch (e) {}
+    }, 500);
 }
 
 // Authentication flow
@@ -276,6 +301,7 @@ function showView(viewId, navElement = null) {
     }
 
     // Load data if needed
+    if (viewId === 'view-create-prescription') fetchPatientsForDoctor();
     if (viewId === 'view-list-prescriptions') fetchPrescriptions();
     if (viewId === 'view-list-receipts') fetchReceipts();
     if (viewId === 'view-admin-dashboard') fetchAdminStats();
@@ -284,6 +310,21 @@ function showView(viewId, navElement = null) {
 }
 
 // Data Fetching
+async function fetchPatientsForDoctor() {
+    if (state.user.role !== 'ROLE_DOCTOR') return;
+    try {
+        const response = await apiCall('/api/doctors/patients');
+        const select = document.getElementById('prescPatientId');
+        select.innerHTML = '<option value="" disabled selected>Select a patient...</option>';
+        response.data.forEach(p => {
+            const option = document.createElement('option');
+            option.value = p.id;
+            option.textContent = `${p.fullName} (ID: ${p.id}, ${p.email})`;
+            select.appendChild(option);
+        });
+    } catch (err) {}
+}
+
 async function fetchPrescriptions() {
     try {
         const endpoint = state.user.role === 'ROLE_DOCTOR' ? '/api/doctors/prescriptions' : '/api/patients/prescriptions';
@@ -320,12 +361,18 @@ async function fetchReceipts() {
         response.data.forEach(r => {
             const tr = document.createElement('tr');
             const statusClass = r.status === 'PENDING' ? 'badge-pending' : 'badge-paid';
+            let actionBtn = '';
+            if (state.user.role === 'ROLE_DOCTOR' && r.status === 'PENDING') {
+                actionBtn = `<button class="btn btn-sm btn-outline btn-success" onclick="updateReceiptStatus(${r.id}, 'PAID')">Mark Paid</button>`;
+            }
+            actionBtn += ` <button class="btn btn-sm btn-outline btn-primary" onclick="downloadReceiptPdf(${r.id})">Download PDF</button>`;
             tr.innerHTML = `
                 <td><strong>${r.receiptNumber}</strong></td>
                 <td>${r.generatedAt.substring(0, 10)}</td>
                 <td>$${r.netAmount.toFixed(2)}</td>
                 <td><span class="badge ${statusClass}">${r.status}</span></td>
                 <td>${r.paymentMethod}</td>
+                <td>${actionBtn}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -385,6 +432,11 @@ async function fetchAdminReceipts() {
         response.data.forEach(r => {
             const tr = document.createElement('tr');
             const statusClass = r.status === 'PENDING' ? 'badge-pending' : 'badge-paid';
+            let actionBtn = '';
+            if (r.status === 'PENDING') {
+                actionBtn = `<button class="btn btn-sm btn-outline btn-success" onclick="updateReceiptStatus(${r.id}, 'PAID')">Mark Paid</button>`;
+            }
+            actionBtn += ` <button class="btn btn-sm btn-outline btn-primary" onclick="downloadReceiptPdf(${r.id})">Download PDF</button>`;
             tr.innerHTML = `
                 <td><strong>${r.receiptNumber}</strong></td>
                 <td>${r.generatedAt.substring(0, 10)}</td>
@@ -392,8 +444,48 @@ async function fetchAdminReceipts() {
                 <td>${r.patientName}</td>
                 <td>$${r.netAmount.toFixed(2)}</td>
                 <td><span class="badge ${statusClass}">${r.status}</span></td>
+                <td>${actionBtn}</td>
             `;
             tbody.appendChild(tr);
         });
     } catch (err) {}
+}
+
+async function updateReceiptStatus(id, newStatus) {
+    if (!confirm(`Are you sure you want to mark this receipt as ${newStatus}?`)) return;
+    try {
+        await apiCall(`/api/receipts/${id}/status?status=${newStatus}`, 'PUT');
+        showToast(`Receipt marked as ${newStatus} successfully`, 'success');
+        // Refresh the current view
+        if (state.currentView === 'view-list-receipts') fetchReceipts();
+        else if (state.currentView === 'view-admin-receipts') fetchAdminReceipts();
+    } catch (err) {}
+}
+
+async function downloadReceiptPdf(id) {
+    try {
+        const token = state.token;
+        const response = await fetch(`/api/receipts/${id}/pdf`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to download PDF');
+        }
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `receipt_${id}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    } catch (err) {
+        showToast('Error downloading PDF: ' + err.message, 'error');
+    }
 }

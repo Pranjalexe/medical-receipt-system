@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,8 +83,8 @@ public class ReceiptController {
      * @return ResponseEntity containing ApiResponse with the updated ReceiptResponse
      */
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasRole('DOCTOR')")
-    @Operation(summary = "Update receipt status", description = "Updates the status of a receipt (DOCTOR role required)")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
+    @Operation(summary = "Update receipt status", description = "Updates the status of a receipt (DOCTOR or ADMIN role required)")
     public ResponseEntity<ApiResponse> updateReceiptStatus(
             @PathVariable Long id,
             @RequestParam @Parameter(description = "New status for the receipt (e.g., PENDING, COMPLETED, CANCELLED)") String status) {
@@ -118,5 +120,31 @@ public class ReceiptController {
 
         ApiResponse apiResponse = new ApiResponse(true, "Receipt retrieved successfully", receiptResponse);
         return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * Downloads the PDF version of a receipt.
+     * <p>
+     * This endpoint is available to any authenticated user (must be authorized for the specific receipt).
+     * </p>
+     *
+     * @param id the receipt ID
+     * @return ResponseEntity containing the PDF byte array
+     */
+    @GetMapping(value = "/{id}/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(summary = "Download receipt PDF", description = "Downloads the generated PDF document for a specific receipt")
+    public ResponseEntity<byte[]> downloadReceiptPdf(@PathVariable Long id) {
+        logger.info("Downloading PDF for receipt [id={}]", id);
+
+        byte[] pdfBytes = receiptService.getReceiptPdf(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "receipt_" + id + ".pdf");
+        headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
     }
 }
