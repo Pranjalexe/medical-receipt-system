@@ -1,6 +1,6 @@
-﻿<div align="center">
+<div align="center">
 
-#Digital Medical Receipt Management System
+# 🏥 Digital Medical Receipt Management System
 
 [![Java Support](https://img.shields.io/badge/Java-17+-orange.svg?style=flat-square&logo=java)](#)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2.3-brightgreen.svg?style=flat-square&logo=spring)](#)
@@ -14,7 +14,7 @@
 
 </div>
 
-## ≡ƒôû Overview
+## 📖 Overview
 
 The **Digital Medical Receipt Management System** is an enterprise-grade backend built with Java and Spring Boot. Designed to modernize clinical workflows, it allows healthcare providers to securely prescribe drugs, automatically generate PDF receipts, and verify medications against the official FDA database. 
 
@@ -22,17 +22,17 @@ This infrastructure handles sensitive medical records while enforcing strict ACI
 
 ---
 
-## Γ£¿ Key Features & Achievements
+## ✨ Key Features & Achievements
 
-- ≡ƒöÆ **Absolute Data Integrity**: Engineered with strict JPA optimistic locking (`@Version`) and Spring `@Transactional` boundaries to guarantee **100% data consistency** during highly concurrent receipt generation.
-- ≡ƒÜÇ **Streamlined Workflows**: Replaced manual billing with an automated PDF receipt portal for doctors and patients, drastically cutting daily operational processing time by **30%**.
-- ΓÜò∩╕Å **Real-Time Drug Verification**: Directly integrated with the external **OpenFDA** national drug code API to safely verify and validate prescriptions.
-- ΓÜí **Ultra-Low Latency Caching**: Architected a sophisticated multi-tier caching system (Caffeine + local MySQL cache) that reduced system query latency by **25%** for frequent drug verification lookups.
-- ≡ƒöæ **Stateless Security**: Fully secured using JWT (JSON Web Tokens) with distinct Role-Based Access Control (RBAC) for `ROLE_DOCTOR` and `ROLE_PATIENT`.
+- 🔒 **Absolute Data Integrity**: Engineered with strict JPA optimistic locking (`@Version`) and Spring `@Transactional` boundaries to guarantee **100% data consistency** during highly concurrent receipt generation.
+- 🚀 **Streamlined Workflows**: Replaced manual billing with an automated PDF receipt portal for doctors and patients, drastically cutting daily operational processing time by **30%**.
+- ⚕️ **Real-Time Drug Verification**: Directly integrated with the external **OpenFDA** national drug code API to safely verify and validate prescriptions.
+- ⚡ **Ultra-Low Latency Caching**: Architected a sophisticated multi-tier caching system (Caffeine + local MySQL cache) that reduced system query latency by **25%** for frequent drug verification lookups.
+- 🔑 **Stateless Security**: Fully secured using JWT (JSON Web Tokens) with distinct Role-Based Access Control (RBAC) for `ROLE_DOCTOR` and `ROLE_PATIENT`.
 
 ---
 
-## ≡ƒÅù∩╕Å System Architecture
+## 🏗️ System Architecture
 
 ```mermaid
 graph TD
@@ -56,7 +56,7 @@ graph TD
 
 ---
 
-## ≡ƒ¢á∩╕Å Technology Stack
+## 🛠️ Technology Stack
 
 | Category | Technology |
 |---|---|
@@ -69,7 +69,7 @@ graph TD
 
 ---
 
-## ≡ƒöî API Endpoints (Highlights)
+## 🔌 API Endpoints (Highlights)
 
 ### Authentication
 - `POST /api/auth/register` - Register a new Doctor or Patient.
@@ -83,63 +83,7 @@ graph TD
 
 ---
 
-## ≡ƒÜÇ Getting Started
-
-### 1. Prerequisites
-- **JDK 17** or higher
-- **Maven** 3.8+
-- **MySQL 8** running on localhost:3306
-
-### 2. Database Configuration
-Create a database in MySQL:
-```sql
-CREATE DATABASE medical_receipts;
-```
-Update your credentials in `src/main/resources/application-dev.yml`:
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/medical_receipts
-    username: root
-    password: password
-```
-
-### 3. Build & Run
-To run the full test suite and verify the build:
-```bash
-./mvnw clean verify
-```
-
-To launch the application:
-```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
-```
-
----
-
-<div align="center">
-<i>Built with modern Java practices and designed for enterprise healthcare scale.</i>
-</div>
-
-
----
-
-# Digital Medical Receipt System - Project Walkthrough & Setup Guide
-
-Welcome to the **Digital Medical Receipt Management System**. This project is a robust, full-stack Spring Boot application with a modern, responsive HTML/JS/CSS frontend. It allows doctors to issue digital prescriptions and receipts, patients to view their medical records, and administrators to monitor system-wide statistics.
-
-## âœ¨ Key Features
-
-1. **Role-Based Access Control (RBAC)**: Secure JWT-based authentication for `ADMIN`, `DOCTOR`, and `PATIENT` roles.
-2. **OpenFDA Integration**: Real-time pharmaceutical drug verification through the US FDA database.
-3. **Resilient API Design**: Fallback caching mechanisms ensure prescriptions can still be issued even if OpenFDA goes down.
-4. **Automated PDF Generation**: Professional, downloadable medical receipts generated dynamically on the server using OpenPDF.
-5. **Admin Dashboard**: System-wide statistics and user management interface.
-6. **Beautiful UI**: Modern "glassmorphism" aesthetic built completely with Vanilla CSS and JS (no heavy frameworks required).
-
----
-
-## ðŸš€ Local Setup & Installation
+## 🚀 Local Setup & Installation
 
 Follow these instructions to run the project locally.
 
@@ -173,7 +117,7 @@ Once the server is running, you can access the frontend web application and API 
 
 ---
 
-## ðŸ› ï¸ Usage Workflow
+## 🛠️ Usage Workflow
 
 ### Default Administrator Account
 The system automatically creates a master administrator account upon startup:
@@ -195,7 +139,7 @@ The system automatically creates a master administrator account upon startup:
 
 ---
 
-## ðŸ§ª Automated Testing
+## 🧪 Automated Testing
 
 If you are on Windows, you can use the provided PowerShell lifecycle script to automatically populate the database with dummy data and test all critical endpoints.
 
@@ -213,22 +157,21 @@ This script will seamlessly:
 
 ---
 
-## ðŸ“‚ Project Structure
+## 📂 Project Structure
 
-```
+```text
 medical-receipt-system/
-â”œâ”€â”€ src/main/java/com/medreceipt/
-â”‚   â”œâ”€â”€ config/       # Security, Cache, and Swagger configurations
-â”‚   â”œâ”€â”€ controller/   # REST API Endpoints
-â”‚   â”œâ”€â”€ exception/    # Global error handling
-â”‚   â”œâ”€â”€ model/        # JPA Entities (User, Doctor, Receipt, etc.)
-â”‚   â”œâ”€â”€ repository/   # Spring Data JPA Interfaces
-â”‚   â”œâ”€â”€ security/     # JWT Token filtering and UserDetailsService
-â”‚   â””â”€â”€ service/      # Business logic and PDF generation
-â”œâ”€â”€ src/main/resources/
-â”‚   â”œâ”€â”€ static/       # Frontend UI (index.html, app.js, index.css)
-â”‚   â””â”€â”€ application.properties # Spring Boot configurations
-â”œâ”€â”€ pom.xml           # Maven dependencies
-â””â”€â”€ test_lifecycle.ps1# E2E automation script
+├── src/main/java/com/medreceipt/
+│   ├── config/       # Security, Cache, and Swagger configurations
+│   ├── controller/   # REST API Endpoints
+│   ├── exception/    # Global error handling
+│   ├── model/        # JPA Entities (User, Doctor, Receipt, etc.)
+│   ├── repository/   # Spring Data JPA Interfaces
+│   ├── security/     # JWT Token filtering and UserDetailsService
+│   └── service/      # Business logic and PDF generation
+├── src/main/resources/
+│   ├── static/       # Frontend UI (index.html, app.js, index.css)
+│   └── application.properties # Spring Boot configurations
+├── pom.xml           # Maven dependencies
+└── test_lifecycle.ps1# E2E automation script
 ```
-
